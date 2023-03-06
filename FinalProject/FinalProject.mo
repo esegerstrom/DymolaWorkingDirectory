@@ -2320,7 +2320,7 @@ in the housing on one side via component Fixed.</p>
       model TM2EPConverter
         "Interface between OpenIPSL generators and detailed turbine models from other libraries"
         import Modelica.Constants.pi;
-        outer OpenIPSL.Electrical.SystemBase SysData "Must add this line in all models";
+        outer OpenIPSL.Electrical.SystemBase SysData(S_b=960000000, fn=30) "Must add this line in all models";
         parameter Integer Np=2;
         parameter OpenIPSL.Types.ApparentPower M_b "Machine base power";
         parameter Real ratio=1 "Transmission ratio (flange_a.phi/flange_b.phi)";
@@ -2332,11 +2332,12 @@ in the housing on one side via component Fixed.</p>
         Real omega_m;
         Real omega_e;
       equation
-        omega_m = der(shaft.phi);
-        omega_e = omega_m/ratio*Np;
-        SPEED = omega_e/(2*SysData.fn*pi) - 1;
-        PMECH = omega_m*shaft.tau*efficiency/(M_b);
-
+        //omega_m = der(shaft.phi);
+        omega_m = (2*SysData.fn*pi)*(1+SPEED)*(2/Np);
+        omega_e = omega_m*(Np/2);
+        SPEED = der(shaft.phi);
+        //SPEED = omega_e/(2*SysData.fn*pi) - 1;
+        PMECH = omega_e*shaft.tau*efficiency/(M_b);
         annotation (Icon(coordinateSystem(preserveAspectRatio=false), graphics={
         Rectangle(
           extent={{-100,100},{100,-100}},
@@ -12012,12 +12013,12 @@ it is assumed that the thermal properties and internal volumes are identical for
                               "Left flange of shaft"
               annotation (Placement(transformation(extent={{-110,-10},{-90,10}})));
           equation
-            connect(machine.EFD, machine.EFD0) annotation (Line(points={{26,-10},{18,-10},
-                    {18,-28},{78,-28},{78,-10},{72,-10}},         color={0,0,127}));
+            connect(machine.EFD, machine.EFD0) annotation (Line(points={{26,-12},
+                    {18,-12},{18,-28},{78,-28},{78,-10},{72,-10}},color={0,0,127}));
             connect(machine.p, pwPin)
               annotation (Line(points={{70,0},{110,0}}, color={0,0,255}));
             connect(tM2EPConverter.PMECH, machine.PMECH) annotation (Line(points={{9.6,8},
-                    {18,8},{18,10},{26,10}},        color={0,0,127}));
+                    {18,8},{18,12},{26,12}},        color={0,0,127}));
             connect(machine.SPEED, tM2EPConverter.SPEED) annotation (Line(points={{
                     72,14},{82,14},{82,-32},{12,-32},{12,-8},{6.4,-8}}, color={0,0,
                     127}));
@@ -37871,8 +37872,8 @@ could be additionally introduced to model the fitting between the heater and the
         parameter Integer pp=2 "Number of poles";
         parameter Modelica.Units.SI.AngularVelocity w_nom=2*Modelica.Constants.pi*SysData.fn/pp
           "nominal angular velocity";
-        BaseModels.Interfaces.GasTurbineGear turboGroup(redeclare record Data =
-              PowerSystems.Mechanics.TurboGroups.Parameters.GasTurbineGear (
+        BaseModels.Interfaces.GasTurbineGear turboGroup(redeclare record Data
+            = PowerSystems.Mechanics.TurboGroups.Parameters.GasTurbineGear (
                 w_nom=3141.5926535898, ratio={30000,10000,3000}))
           annotation (Placement(transformation(extent={{-12,-4},{8,16}})));
         PrimeMovers.Gas.PlantD.GasTurbineB gasTurbineB
@@ -38080,18 +38081,19 @@ could be additionally introduced to model the fitting between the heater and the
                 false)));
     end HydroTurbineIcon;
   end Icons;
-  annotation (uses(Modelica(version="4.0.0"), OpenIPSL(version="2.0.0-beta.1"),
+  annotation (uses(Modelica(version="4.0.0"),
       SMIB(version="2"),
       Modelon(version="4.0"),
       ThermalPower(version="1.23"),
-      PowerSystems(version="1.0.1"),
       SMIBPS_IdControl(version="1"),
       Modelica_LinearSystems2(version="2.4.0"),
       DataFiles(version="1.1.0"),
       CourseExamples_asad(version="1"),
       NHES(version="2"),
       ECSE_6170_Final_Project_before_Miguel(version="9"),
-      ThermoPower(version="3.2")),
+      ThermoPower(version="3.2"),
+      PowerSystems(version="1.0.0"),
+      OpenIPSL(version="3.0.1")),
     version="2",
     conversion(from(version={"1",""}, script=
             "modelica://FinalProject/ConvertFromFinalProject_1.mos")));

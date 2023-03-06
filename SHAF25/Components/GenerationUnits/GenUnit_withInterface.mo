@@ -11,7 +11,7 @@ model GenUnit_withInterface
     Tpd0=5,
     Tppd0=0.5E-01,
     Tppq0=0.1,
-    H=4.0,
+    H=0.869,
     D=0,
     Xd=1.41,
     Xq=1.35,
@@ -27,9 +27,9 @@ model GenUnit_withInterface
   OpenIPSL.Interfaces.PwPin pwPin
     annotation (Placement(transformation(extent={{100,-10},{120,10}})));
   Modelica.Blocks.Math.Gain gain(k=generator.M_b)
-    annotation (Placement(transformation(extent={{-100,10},{-80,30}})));
+    annotation (Placement(transformation(extent={{-140,10},{-120,30}})));
   Modelica.Blocks.Math.Division division
-    annotation (Placement(transformation(extent={{-60,-10},{-40,10}})));
+    annotation (Placement(transformation(extent={{-100,-10},{-80,10}})));
   OpenIPSL.Electrical.Controls.PSSE.TG.IEEEG1 governor(
     P0=0.4,
     K=20,
@@ -59,31 +59,31 @@ model GenUnit_withInterface
   Modelica.Blocks.Sources.Constant const(k=0)
     annotation (Placement(transformation(extent={{100,-58},{90,-48}})));
   Modelica.Mechanics.Rotational.Sources.Torque torque
-    annotation (Placement(transformation(extent={{-30,-10},{-10,10}})));
+    annotation (Placement(transformation(extent={{-70,-10},{-50,10}})));
   Shafts.Shaft_Scalable_v2_heqk
                            shaft(
     p=interface.Np,
     N=4,                         H={0.176,1.427,1.428,1.428}, K={17.78,27.66,31.31,
-        37.25}) annotation (Placement(transformation(extent={{0,-10},{20,10}})));
+        37.25}) annotation (Placement(transformation(extent={{-20,-60},{0,-40}})));
   Modelica.Blocks.Sources.RealExpression realExpression(y=2*Modelica.Constants.pi
         *SysData.fn*(1 + generator.SPEED)*(2/interface.Np))
-    annotation (Placement(transformation(extent={{-100,-30},{-80,-10}})));
+    annotation (Placement(transformation(extent={{-140,-30},{-120,-10}})));
   FinalProject.BaseModels.Interfaces.TM2EPConverter interface(Np=2, M_b=
         generator.M_b)
     annotation (Placement(transformation(extent={{24,10},{44,-10}})));
 equation
   connect(generator.p, pwPin)
     annotation (Line(points={{80,0},{110,0}}, color={0,0,255}));
-  connect(torque.flange, shaft.flange_a)
-    annotation (Line(points={{-10,0},{-0.4,0}},color={0,0,0}));
   connect(division.y, torque.tau)
-    annotation (Line(points={{-39,0},{-32,0}}, color={0,0,127}));
-  connect(gain.y, division.u1) annotation (Line(points={{-79,20},{-68,20},{-68,6},
-          {-62,6}},    color={0,0,127}));
-  connect(realExpression.y, division.u2) annotation (Line(points={{-79,-20},{-68,
-          -20},{-68,-6},{-62,-6}},     color={0,0,127}));
-  connect(governor.PMECH_HP, gain.u) annotation (Line(points={{59,34},{-108,34},
-          {-108,20},{-102,20}},
+    annotation (Line(points={{-79,0},{-72,0}}, color={0,0,127}));
+  connect(gain.y, division.u1) annotation (Line(points={{-119,20},{-108,20},{
+          -108,6},{-102,6}},
+                       color={0,0,127}));
+  connect(realExpression.y, division.u2) annotation (Line(points={{-119,-20},{
+          -108,-20},{-108,-6},{-102,-6}},
+                                       color={0,0,127}));
+  connect(governor.PMECH_HP, gain.u) annotation (Line(points={{59,34},{-148,34},
+          {-148,20},{-142,20}},
                               color={0,0,127}));
   connect(generator.SPEED, governor.SPEED_HP)
     annotation (Line(points={{81,7},{86,7},{86,30},{78,30}}, color={0,0,127}));
@@ -103,13 +103,14 @@ equation
           {84,-34},{79,-34}}, color={0,0,127}));
   connect(interface.PMECH, generator.PMECH) annotation (Line(points={{45,-5},{
           54.5,-5},{54.5,6},{58,6}}, color={0,0,127}));
-  connect(shaft.flange_b, interface.shaft)
-    annotation (Line(points={{20.4,0},{24,0}}, color={0,0,0}));
   connect(generator.SPEED, interface.SPEED) annotation (Line(points={{81,7},{86,
           7},{86,16},{50,16},{50,5},{43,5}}, color={0,0,127}));
-  annotation (Icon(coordinateSystem(preserveAspectRatio=false, extent={{-120,-100},
-            {100,100}})),                                        Diagram(
-        coordinateSystem(preserveAspectRatio=false, extent={{-120,-100},{100,100}})),
+  connect(torque.flange, interface.shaft)
+    annotation (Line(points={{-50,0},{24,0}}, color={0,0,0}));
+  annotation (Icon(coordinateSystem(preserveAspectRatio=false, extent={{-160,
+            -100},{100,100}})),                                  Diagram(
+        coordinateSystem(preserveAspectRatio=false, extent={{-160,-100},{100,
+            100}})),
     experiment(
       StopTime=100,
       Interval=0.05,

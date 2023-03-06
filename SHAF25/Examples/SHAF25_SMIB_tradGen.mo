@@ -1,5 +1,5 @@
 within SHAF25.Examples;
-model SHAF25_SMIB
+model SHAF25_SMIB_tradGen
   "SMIB - Single Machine Infinite Base system with one load."
   extends Modelica.Icons.Example;
   OpenIPSL.Electrical.Branches.PwLine pwLine(
@@ -67,7 +67,7 @@ model SHAF25_SMIB
     X=0.1) annotation (Placement(transformation(extent={{54,26},{66,34}})));
   OpenIPSL.Electrical.Buses.Bus SHUNT
     annotation (Placement(transformation(extent={{30,20},{50,40}})));
-  Components.GenerationUnits.GenUnit generatorUnit
+  Components.GenerationUnits.TradGen generatorUnit
     annotation (Placement(transformation(extent={{-80,-10},{-60,10}})));
 equation
   connect(GEN1.p, pwLine.p)
@@ -99,5 +99,9 @@ equation
   connect(pwLine2.n, GEN2.p) annotation (Line(points={{65.4,30},{70,30},{70,0},{80,0}},
                    color={0,0,255}));
   connect(generatorUnit.pwPin, GEN1.p)
-    annotation (Line(points={{-59,0},{-30,0}}, color={0,0,255}));
-end SHAF25_SMIB;
+    annotation (Line(points={{-59.2308,0},{-30,0}}, color={0,0,255}));
+  annotation (experiment(
+      StopTime=30,
+      Interval=0.04,
+      __Dymola_Algorithm="Dassl"));
+end SHAF25_SMIB_tradGen;

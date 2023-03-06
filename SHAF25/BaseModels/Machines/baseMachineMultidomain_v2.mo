@@ -146,8 +146,9 @@ public
 equation
   //adding mechcanical interface
   SPEED_MECH = w_b * (1 + SPEED)*2/pole_no;//mechanical speed (rad/s)
+  //SPEED_MECH = der(flange_b.phi);
   flange_b.phi = delta*pole_no/2; // (deg)
-  SPEED_MECH*flange_b.tau/(S_b) = PMECH; // (pu)
+  (SPEED_MECH*flange_b.tau/(M_b))*(pole_no/2) = PMECH; // (pu)
 
   //Interfacing outputs with the internal variables
   ANGLE = delta;
@@ -162,7 +163,7 @@ equation
   anglev = atan2(p.vi, p.vr);
   I = sqrt(p.ii^2 + p.ir^2);
   anglei = atan2(p.ii, p.ir);
-  der(w) = (1/(2*H))*((w_b/S_b)*(2/pole_no)*flange_b.tau-Te-(w/(1+w))*D);
+  der(w) = ((PMECH - D*w)/(w + 1) - Te)/(2*H);
   der(delta) = w_b*w;
   annotation (
     Icon(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,
